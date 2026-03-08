@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "charliermarsh.ruff",
+    "codezombiech.gitignore",
+    "DavidAnson.vscode-markdownlint",
+    "eamodio.gitlens",
+    "EditorConfig.EditorConfig",
+    "ms-python.python",
+    "ryu1kn.partial-diff",
+    "yzhang.markdown-all-in-one",
+  ]
+}
