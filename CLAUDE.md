@@ -34,9 +34,11 @@ rsl <server> set-pref <key> <value>
                                 # set preference on all folders
 rsl <server> set-pref <name> <key> <value>
                                 # set preference on one folder
+rsl <server> set-setting <key> <value>
+                                # set global power user preference
 ```
 
-Mutation commands (`add`, `connect`, `connect-all`, `remove`, `set-pref`) require an explicit server.
+Mutation commands (`add`, `connect`, `connect-all`, `remove`, `set-pref`, `set-setting`) require an explicit server.
 `list` defaults to all servers when no server is specified.
 
 Name arguments resolve to `base_path/name`. Paths starting with `/` are used as-is.
@@ -66,6 +68,22 @@ sudo synoacltool -add /volume1/shares/<folder> user:rslsync:allow:rwxpdDaARWcCo:
 
 Or via DSM web UI: Control Panel > Shared Folder > Edit > Permissions tab > "System internal user" dropdown > tick Read/Write for `rslsync`.
 
+### Restarting Resilio Sync from Synology CLI
+
+The Synology package manager uses a start-stop-status script:
+
+```bash
+# Stop
+sudo /var/packages/resiliosync/scripts/start-stop-status stop
+
+# Start
+sudo /var/packages/resiliosync/scripts/start-stop-status start
+
+# Restart (stop then start)
+sudo /var/packages/resiliosync/scripts/start-stop-status stop && \
+sudo /var/packages/resiliosync/scripts/start-stop-status start
+```
+
 ### API endpoints discovered by reverse-engineering the web UI JS
 
 - `getsyncfolders` (with `discovery=1`) - list connected folders
@@ -74,6 +92,7 @@ Or via DSM web UI: Control Panel > Shared Folder > Edit > Permissions tab > "Sys
 - `addsyncfolder` - add a new folder by path
 - `removefolder` - remove a folder
 - `setfolderpref` - set folder preferences
+- `setsettings` - set global power user preferences
 
 ## Linting
 

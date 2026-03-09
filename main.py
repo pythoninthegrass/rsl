@@ -28,6 +28,8 @@ Usage:
                                   Set preference on all folders
     rsl <server> set-pref <name> <key> <value>
                                   Set preference on one folder
+    rsl <server> set-setting <key> <value>
+                                  Set global power user preference
 
 Environment (per server, replace <SRV> with SRC or DST):
     RSL_<SRV>_HOST       Resilio host (default: localhost)
@@ -118,6 +120,10 @@ class ResilioAPI:
     def set_folder_pref(self, folderid: str, key: str, value: str) -> dict:
         encoded_value = quote(value, safe="")
         return self.api(f"action=setfolderpref&folderid={folderid}&{key}={encoded_value}")
+
+    def set_setting(self, key: str, value: str) -> dict:
+        encoded_value = quote(value, safe="")
+        return self.api(f"action=setsettings&{key}={encoded_value}")
 
 
 def _check_result(result: dict) -> str | None:
@@ -291,6 +297,22 @@ def cmd_set_pref(api: ResilioAPI, args: list[str]):
         return 1
 
 
+def cmd_set_setting(api: ResilioAPI, args: list[str]):
+    if len(args) != 2:
+        print("Usage: rsl <server> set-setting <key> <value>")
+        return 1
+    key, value = args
+    value = _normalize_value(value)
+    print(f"Setting {key}={value} on {api.name}")
+    result = api.set_setting(key, value)
+    error = _check_result(result)
+    if error:
+        print(f"  Failed: {error}")
+        return 1
+    print("  OK")
+    return 0
+
+
 def main():
     args = sys.argv[1:]
 
@@ -354,6 +376,16 @@ def main():
                 sys.exit(1)
             api = ResilioAPI(server)
             sys.exit(cmd_set_pref(api, args[1:]) or 0)
+
+        case "set-setting":
+            if server is None:
+                print("Error: server required (e.g. rsl src set-setting worker_threads_count 1)")
+                sys.exit(1)
+            if len(args) < 3:
+                print(f"Usage: rsl {server} set-setting <key> <value>")
+                sys.exit(1)
+            api = ResilioAPI(server)
+            sys.exit(cmd_set_setting(api, args[1:]) or 0)
 
         case _:
             print(__doc__)

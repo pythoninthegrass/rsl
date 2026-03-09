@@ -14,7 +14,21 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+    "pytest>=9.0.2",
     "ruff>=0.15.5",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_functions = "test_*"
+python_classes = "Test*"
+asyncio_mode = "auto"
+markers = [
+    "unit: marks tests as unit tests",
+    "integration: marks tests as integration tests",
+    "e2e: marks tests as end-to-end tests",
+    "benchmark: marks performance benchmark tests"
 ]
 
 [project.scripts]
